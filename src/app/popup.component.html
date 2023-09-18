@@ -1,0 +1,21 @@
+<div class="popup">
+  <h1>{{ title }}</h1>
+
+  <div class="popup__action">
+    <app-button (click)="onStartReload()">
+      <span>Add Tab</span>
+    </app-button>
+
+    <app-button (click)="onStopReload()">
+      <span>Remove Tab</span>
+    </app-button>
+  </div>
+
+  <div>
+    <input [formControl]="intervalControl" type="number" />
+  </div>
+
+  <div>
+    <h3>{{ intervalControl.value }}</h3>
+  </div>
+</div>
