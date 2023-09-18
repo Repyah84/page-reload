@@ -2,13 +2,18 @@
   <h1>{{ title }}</h1>
 
   <div class="popup__action">
-    <app-button (click)="onStartReload()">
+    <button
+      [disabled]="!intervalControl.valid"
+      [class.popup--is-reloading]="isReloading"
+      (click)="onStartReload()"
+      class="popup__btn"
+    >
       <span>Add Tab</span>
-    </app-button>
+    </button>
 
-    <app-button (click)="onStopReload()">
+    <button class="popup__btn" (click)="onStopReload()">
       <span>Remove Tab</span>
-    </app-button>
+    </button>
   </div>
 
   <div>

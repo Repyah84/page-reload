@@ -13,10 +13,26 @@
   margin: 0 auto;
 }
 
-.popup__action {
+.popup .popup__action {
   display: flex;
 
   flex-direction: column;
 
   row-gap: 10px;
+}
+
+.popup .popup__btn {
+  display: inline-block;
+
+  border: none;
+
+  padding: 10px;
+
+  background-color: burlywood;
+
+  cursor: pointer;
+}
+
+.popup .popup--is-reloading {
+  background-color: blue;
 }

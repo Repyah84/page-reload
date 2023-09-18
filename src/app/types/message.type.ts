@@ -1,1 +1,6 @@
-export type Message = 'startReload' | 'stopReload';
+export type Message =
+  | 'startReload'
+  | 'stopReload'
+  | 'isReloading'
+  | 'isReloadingFromContent'
+  | 'setDocumentTexFrommContent';

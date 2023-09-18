@@ -1,13 +1,17 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 import { PopupService } from './popup.service';
+import { Subscription } from 'rxjs';
+
+const MIN_INTERVAL_COUNT_VALUE = 1000;
 
 @Component({
   selector: 'popup-root',
@@ -19,28 +23,65 @@ import { PopupService } from './popup.service';
 export class PopupComponent implements OnInit, OnDestroy {
   title = 'text-search';
 
-  public intervalControl = new FormControl<number>(0);
+  public isReloading = false;
 
-  public constructor(private readonly _popup: PopupService) {}
+  private readonly _subscription = new Subscription();
+
+  public intervalControl = new FormControl<number>(MIN_INTERVAL_COUNT_VALUE, [
+    Validators.min(MIN_INTERVAL_COUNT_VALUE),
+    Validators.nullValidator,
+  ]);
+
+  public constructor(
+    private readonly _popup: PopupService,
+    private readonly _cdr: ChangeDetectorRef
+  ) {}
 
   public ngOnInit(): void {
-    this._popup.startReload$.subscribe({
-      next: (value) => {
-        console.log(value);
-      },
-    });
+    this._subscription.add(
+      this._popup.isReloading$.subscribe({
+        next: ({ tabId, intervalCount, startReloadDate }) => {
+          console.log('IS_RELOADED', tabId, startReloadDate);
 
-    this._popup.stopReload$.subscribe({
-      next: (value) => {
-        console.log(value);
-      },
-    });
+          this.isReloading = true;
+          this.intervalControl.setValue(intervalCount);
+
+          this._cdr.markForCheck();
+        },
+      })
+    );
+
+    this._subscription.add(
+      this._popup.startReload$.subscribe({
+        next: (value) => {
+          console.log('startReload', value);
+
+          this.isReloading = true;
+
+          this._cdr.markForCheck();
+        },
+      })
+    );
+
+    this._subscription.add(
+      this._popup.stopReload$.subscribe({
+        next: (value) => {
+          console.log('stopReload', value);
+
+          this.isReloading = false;
+
+          this._cdr.markForCheck();
+        },
+      })
+    );
   }
 
-  async onStartReload(): Promise<void> {
-    const value = this.intervalControl.value || 0;
+  public onStartReload(): void {
+    if (!this.intervalControl.valid) {
+      return;
+    }
 
-    this._popup.startReload(value);
+    this._popup.startReload(this.intervalControl.value as number);
   }
 
   public onStopReload(): void {
@@ -48,6 +89,6 @@ export class PopupComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    console.log('DESTROY');
+    this._subscription.unsubscribe();
   }
 }
