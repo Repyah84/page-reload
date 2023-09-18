@@ -27,7 +27,7 @@
             "assets": ["src/favicon.ico", "src/assets", "src/manifest.json"],
             "scripts": [],
             "customWebpackConfig": {
-              "path": "./custom-webpack.config.js"
+              "path": "./custom-webpack.config.ts"
             }
           },
           "configurations": {
@@ -48,7 +48,7 @@
             },
             "development": {
               "customWebpackConfig": {
-                "path": "./custom-webpack-dev.config.js",
+                "path": "./custom-webpack.config.ts",
                 "replaceDuplicatePlugins": true
               },
               "buildOptimizer": false,
