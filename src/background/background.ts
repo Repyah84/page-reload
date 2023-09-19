@@ -10,24 +10,51 @@ import { RuntimeStartReloadMessageData } from '../app/types/runtime-start-reload
 
 const reloadTabList = new Map<number, TabReload>();
 
-const parsDocumentText = (tabId: number, documentText: string): string => {
+const changeReloadTabDataBySearchResult = (
+  tabId: number,
+  documentText: string
+) => {
   const tabReload = reloadTabList.get(tabId);
 
   if (tabReload === undefined) {
     throw new Error(`Tad ${tabId} is not exist`);
   }
 
-  const reg = new RegExp(tabReload.searchText, 'gi');
+  const { searchText } = tabReload;
 
-  const searchTExtValue = documentText.match(reg);
+  const resultSearch = searchTextInDocument(searchText, documentText);
 
-  if (searchTExtValue === null) {
-    return `There are not coincidences this tab${tabId}`;
+  if (resultSearch === null) {
+    return `There aren't coincidences in Tab: ${tabId}`;
   }
 
-  console.log(`!!!!!!!!!!!!!!!!coincidences__${tabId}`, searchTExtValue);
+  deleteTabReload(tabId);
 
-  return `There are ${searchTExtValue.length} coincidences this tab${tabId}`;
+  sendNotification(
+    `"${tabReload.searchText}" found :${resultSearch.length} coincidences`
+  );
+
+  return `There are ${resultSearch.length} coincidences in Tab: ${tabId}`;
+};
+
+const sendNotification = (message: string): void => {
+  chrome.notifications.getPermissionLevel((permission) => {
+    if (permission === 'granted') {
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'favicon.ico',
+        title: 'Found coincidences',
+        message,
+      });
+    }
+  });
+};
+
+const searchTextInDocument = (
+  searchText: string,
+  documentText: string
+): null | string[] => {
+  return documentText.match(new RegExp(searchText, 'gi'));
 };
 
 const isReloading = (tabId: number): TabReload | undefined => {
@@ -88,18 +115,20 @@ chrome.runtime.onMessage.addListener(
       sendResponse(deleteTabReload(request.tabId));
     }
 
-    if (!sender.tab?.id) {
+    const tabId = sender.tab?.id;
+
+    if (tabId === undefined) {
       return;
     }
-
-    const tabId = sender.tab.id;
 
     if (isTabReloadFromContentMessage(request)) {
       sendResponse(!!isReloading(tabId));
     }
 
     if (isSetDocumentTextFromContentMessage(request)) {
-      sendResponse(parsDocumentText(tabId, request.documentText));
+      sendResponse(
+        changeReloadTabDataBySearchResult(tabId, request.documentText)
+      );
     }
   }
 );

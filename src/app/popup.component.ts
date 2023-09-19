@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -21,7 +22,7 @@ const MIN_INTERVAL_COUNT_VALUE = 3000;
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PopupComponent implements OnInit, OnDestroy {
+export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   public isReloading = false;
 
   private readonly _subscription = new Subscription();
@@ -82,6 +83,14 @@ export class PopupComponent implements OnInit, OnDestroy {
         },
       })
     );
+  }
+
+  public ngAfterViewInit(): void {
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission().then((permission) => {
+        console.log(permission);
+      });
+    }
   }
 
   public onStartReload(): void {

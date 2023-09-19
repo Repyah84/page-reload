@@ -3,7 +3,7 @@
   "name": "Text Search",
   "description": "Base Level Extension",
   "version": "1.0",
-  "permissions": ["scripting", "storage", "activeTab", "tabs"],
+  "permissions": ["scripting", "activeTab", "tabs", "notifications"],
   "action": {
     "default_popup": "index.html",
     "default_icon": "favicon.ico"
