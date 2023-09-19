@@ -13,11 +13,12 @@ export const getTabReloadResponse = (
     return null;
   }
 
-  const { tabId, intervalCount, startReloadDate } = value;
+  const { tabId, intervalCount, startReloadDate, searchText } = value;
 
   return {
     tabId,
     intervalCount,
     startReloadDate,
+    searchText,
   };
 };

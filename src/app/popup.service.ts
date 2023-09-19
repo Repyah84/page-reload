@@ -6,14 +6,15 @@ import { RuntimeStarReloadMessage } from './types/runtime-start-reload-message.t
 import { RuntimeStopReloadMessage } from './types/runtime-stop-reload-message.type';
 import { RuntimeMessageResponse } from './types/runtime-message-response';
 import { RuntimeMessageIsReloading } from './types/runtime-message-is-reloading.type';
+import { RuntimeTabDto } from './dto/runtime-tab-dto.type';
 
 @Injectable({ providedIn: 'root' })
 export class PopupService {
-  private readonly _startReload$ = new Subject<number>();
+  private readonly _startReload$ = new Subject<RuntimeTabDto>();
   private readonly _stopReload$ = new Subject<void>();
 
   public readonly startReload$ = this._startReload$.pipe(
-    exhaustMap((value) =>
+    exhaustMap((dto) =>
       this._activeTab.getActiveTabId().pipe(
         switchMap((tabId) =>
           this._massage.setMessage<
@@ -22,8 +23,8 @@ export class PopupService {
           >({
             message: 'startReload',
             data: {
+              ...dto,
               tabId,
-              interval: value,
             },
           })
         )
@@ -35,10 +36,7 @@ export class PopupService {
     exhaustMap(() =>
       this._activeTab.getActiveTabId().pipe(
         switchMap((tabId) =>
-          this._massage.setMessage<
-            RuntimeStopReloadMessage,
-            { farewell: string }
-          >({
+          this._massage.setMessage<RuntimeStopReloadMessage, string>({
             message: 'stopReload',
             tabId,
           })
@@ -62,8 +60,8 @@ export class PopupService {
     )
   );
 
-  public startReload(value: number): void {
-    this._startReload$.next(value);
+  public startReload(dto: RuntimeTabDto): void {
+    this._startReload$.next(dto);
   }
 
   public stopReload(): void {

@@ -1,18 +1,16 @@
 <div class="popup">
-  <h1>{{ title }}</h1>
-
   <div class="popup__action">
     <button
-      [disabled]="!intervalControl.valid"
+      [disabled]="!validator"
       [class.popup--is-reloading]="isReloading"
       (click)="onStartReload()"
       class="popup__btn"
     >
-      <span>Add Tab</span>
+      <span>Start reload</span>
     </button>
 
     <button class="popup__btn" (click)="onStopReload()">
-      <span>Remove Tab</span>
+      <span>Stop reload</span>
     </button>
   </div>
 
@@ -21,6 +19,12 @@
   </div>
 
   <div>
-    <h3>{{ intervalControl.value }}</h3>
+    <input [formControl]="textControl" type="text" placeholder="enter text" />
+  </div>
+
+  <div>
+    <h3>Reload Time: {{ intervalControl.value }}</h3>
+
+    <h3>Search text: {{ textControl.value }}</h3>
   </div>
 </div>
