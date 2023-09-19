@@ -4,7 +4,7 @@ import { Observable, defer, map, shareReplay } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class ChromeActiveTabService {
   public readonly activeTab$ = defer(() =>
-    chrome.tabs.query({ active: true })
+    chrome.tabs.query({ active: true, currentWindow: true })
   ).pipe(
     map(([tab]) => tab),
     shareReplay({ refCount: true, bufferSize: 1 })

@@ -1,26 +1,3 @@
-// chrome.runtime.onInstalled.addListener((details) => {
-//   console.log('#####################', details);
-
-//   if (details.reason !== 'install' && details.reason !== 'update') return;
-
-//   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//     console.log(
-//       'onMESSAGE',
-//       sender.tab
-//         ? 'from a content script:' + sender.tab.url
-//         : 'from the extension'
-//     );
-
-//     if (request.message === 'data') {
-//       console.log('DATA', request.data);
-
-//       sendResponse({ farewell: 'data was' });
-//     }
-//   });
-// });
-
-// console.log('BACK', chrome);
-
 import { TabReload } from '../app/types/tab-reload.type';
 import { RuntimeMessages } from './types/runtime-messages.type';
 import { isReloadingMessage } from './guards/is-reloading-message.guard';
@@ -108,9 +85,7 @@ chrome.runtime.onMessage.addListener(
     }
 
     if (isSetDocumentTextMessage(request)) {
-      const { documentText } = request;
-
-      parsDocumentText(documentText);
+      parsDocumentText(request.documentText);
 
       sendResponse('document parsed');
     }

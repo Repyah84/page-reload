@@ -1,4 +1,4 @@
-import { RuntimeMessageIsTabReloadFromContent } from './app/types/runtime-meesage-is-tab-reload-from-content.type';
+import { RuntimeMessageIsTabReloadFromContent } from './app/types/runtime-message-is-tab-reload-from-content.type';
 import { RuntimeSetDocumentText } from './app/types/runtime-message-set-document-text.type';
 
 const messageIsTabReload = async (
@@ -35,16 +35,16 @@ const windowEvent = async () => {
     return;
   }
 
+  const formatDocumentText = documentText.replace(/\s+/g, ' ');
+
   const response = await messageSetDOcumentText({
     message: 'setDocumentTexFrommContent',
-    documentText,
+    documentText: formatDocumentText,
   });
 
+  console.log('CONTENT_RESPONSE', response);
+
   window.removeEventListener('load', windowEvent);
-
-  console.log('CONTENT_RESPONCE', response);
-
-  return;
 };
 
 window.addEventListener('load', windowEvent);

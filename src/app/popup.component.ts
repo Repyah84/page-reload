@@ -11,7 +11,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { PopupService } from './popup.service';
 import { Subscription } from 'rxjs';
 
-const MIN_INTERVAL_COUNT_VALUE = 1000;
+const MIN_INTERVAL_COUNT_VALUE = 3000;
 
 @Component({
   selector: 'popup-root',
@@ -29,7 +29,7 @@ export class PopupComponent implements OnInit, OnDestroy {
 
   public intervalControl = new FormControl<number>(MIN_INTERVAL_COUNT_VALUE, [
     Validators.min(MIN_INTERVAL_COUNT_VALUE),
-    Validators.nullValidator,
+    Validators.required,
   ]);
 
   public constructor(
