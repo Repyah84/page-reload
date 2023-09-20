@@ -1,12 +1,12 @@
 import { RuntimeMessageIsTabReloadFromContent } from 'src/app/types/runtime-message-is-tab-reload-from-content.type';
 import { RuntimeMessageIsReloading } from 'src/app/types/runtime-message-is-reloading.type';
-import { RuntimeSetDocumentText } from 'src/app/types/runtime-message-set-document-text.type';
-import { RuntimeStarReloadMessage } from 'src/app/types/runtime-start-reload-message.type';
-import { RuntimeStopReloadMessage } from 'src/app/types/runtime-stop-reload-message.type';
+import { RuntimeMessageSetDocumentText } from 'src/app/types/runtime-message-set-document-text.type';
+import { RuntimeMessageStarReload } from 'src/app/types/runtime-message-start-reload.type';
+import { RuntimeMessageStopReload } from 'src/app/types/runtime-message-stop-reload.type';
 
 export type RuntimeMessages =
-  | RuntimeStarReloadMessage
-  | RuntimeStopReloadMessage
+  | RuntimeMessageStarReload
+  | RuntimeMessageStopReload
   | RuntimeMessageIsReloading
   | RuntimeMessageIsTabReloadFromContent
-  | RuntimeSetDocumentText;
+  | RuntimeMessageSetDocumentText;

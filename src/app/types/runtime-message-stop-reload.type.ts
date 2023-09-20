@@ -1,5 +1,5 @@
 import { RuntimeMessage } from './runtime-message.type';
 
-export interface RuntimeStopReloadMessage extends RuntimeMessage {
+export interface RuntimeMessageStopReload extends RuntimeMessage {
   tabId: number;
 }

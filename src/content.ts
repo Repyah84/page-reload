@@ -1,5 +1,5 @@
 import { RuntimeMessageIsTabReloadFromContent } from './app/types/runtime-message-is-tab-reload-from-content.type';
-import { RuntimeSetDocumentText } from './app/types/runtime-message-set-document-text.type';
+import { RuntimeMessageSetDocumentText } from './app/types/runtime-message-set-document-text.type';
 
 const messageIsTabReload = async (
   data: RuntimeMessageIsTabReloadFromContent
@@ -11,9 +11,11 @@ const messageIsTabReload = async (
 };
 
 const messageSetDOcumentText = async (
-  data: RuntimeSetDocumentText
+  data: RuntimeMessageSetDocumentText
 ): Promise<string> => {
-  return chrome.runtime.sendMessage<RuntimeSetDocumentText, string>(data);
+  return chrome.runtime.sendMessage<RuntimeMessageSetDocumentText, string>(
+    data
+  );
 };
 
 const windowEvent = async () => {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, defer, map, shareReplay } from 'rxjs';
+import { Observable, defer, map, shareReplay, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ChromeActiveTabService {
@@ -13,11 +13,13 @@ export class ChromeActiveTabService {
   public getActiveTabId(): Observable<number> {
     return this.activeTab$.pipe(
       map((tab) => {
-        if (tab.id === undefined) {
+        const tabId = tab.id;
+
+        if (tabId === undefined) {
           throw new Error('Tab id is undefine');
         }
 
-        return tab.id;
+        return tabId;
       })
     );
   }

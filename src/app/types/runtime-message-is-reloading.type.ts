@@ -1,3 +1,3 @@
-import { RuntimeStopReloadMessage } from './runtime-stop-reload-message.type';
+import { RuntimeMessageStopReload } from './runtime-message-stop-reload.type';
 
-export interface RuntimeMessageIsReloading extends RuntimeStopReloadMessage {}
+export interface RuntimeMessageIsReloading extends RuntimeMessageStopReload {}

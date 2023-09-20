@@ -6,14 +6,38 @@ import { isStartReloadMessage } from './guards/is-start-reload-message.guard';
 import { isStopReloadMessage } from './guards/is-stop-reload-message.guard';
 import { isTabReloadFromContentMessage } from './guards/is-tab-reload-from-content-message.tpe';
 import { isSetDocumentTextFromContentMessage } from './guards/is-set-document-text-from-content-message';
-import { RuntimeStartReloadMessageData } from '../app/types/runtime-start-reload-message-data.type';
+import { RuntimeMessageStartReloadData } from '../app/types/runtime-message-start-reload-data.type';
+import { searchTextInDocument } from './utils/search-text-in-document';
+import { updateTabState } from './utils/update-tab-state';
 
 const reloadTabList = new Map<number, TabReload>();
 
-const changeReloadTabDataBySearchResult = (
-  tabId: number,
-  documentText: string
-) => {
+const sendNotification = (tabId: number, message: string): void => {
+  chrome.notifications.getPermissionLevel((permission) => {
+    if (permission === 'granted') {
+      chrome.notifications.create(
+        {
+          type: 'basic',
+          iconUrl: 'favicon.ico',
+          title: 'Found coincidences',
+          message,
+        },
+        (notificationId) => {
+          const tabReload = reloadTabList.get(tabId);
+
+          if (tabReload !== undefined) {
+            reloadTabList.set(
+              tabId,
+              updateTabState(tabReload, { notificationId })
+            );
+          }
+        }
+      );
+    }
+  });
+};
+
+const changeReloadTabBySearchResult = (tabId: number, documentText: string) => {
   const tabReload = reloadTabList.get(tabId);
 
   if (tabReload === undefined) {
@@ -28,61 +52,59 @@ const changeReloadTabDataBySearchResult = (
     return `There aren't coincidences in Tab: ${tabId}`;
   }
 
-  deleteTabReload(tabId);
+  stopReload(tabId);
 
   sendNotification(
+    tabId,
     `"${tabReload.searchText}" found :${resultSearch.length} coincidences`
   );
 
   return `There are ${resultSearch.length} coincidences in Tab: ${tabId}`;
 };
 
-const sendNotification = (message: string): void => {
-  chrome.notifications.getPermissionLevel((permission) => {
-    if (permission === 'granted') {
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'favicon.ico',
-        title: 'Found coincidences',
-        message,
-      });
-    }
-  });
-};
-
-const searchTextInDocument = (
-  searchText: string,
-  documentText: string
-): null | string[] => {
-  return documentText.match(new RegExp(searchText, 'gi'));
-};
-
-const isReloading = (tabId: number): TabReload | undefined => {
+const isReloadingState = (tabId: number): TabReload | undefined => {
   return reloadTabList.get(tabId);
 };
 
-const setTabReload = ({
+const startReload = ({
   tabId,
   intervalCount,
   searchText,
-}: RuntimeStartReloadMessageData): TabReload => {
-  let tab = reloadTabList.get(tabId);
+}: RuntimeMessageStartReloadData): TabReload => {
+  const dataTAbReload: TabReload = {
+    tabId,
+    searchText,
+    isReload: true,
+    intervalCount,
+    notificationId: null,
+    startReloadDate: Date.now(),
+    interval: setInterval(() => {
+      chrome.tabs.reload(tabId);
+    }, intervalCount),
+  };
+
+  reloadTabList.set(tabId, dataTAbReload);
+
+  return reloadTabList.get(tabId) as TabReload;
+};
+
+const stopReload = (tabId: number): string => {
+  const tab = reloadTabList.get(tabId);
 
   if (tab === undefined) {
-    tab = {
-      tabId,
-      searchText,
-      intervalCount,
-      startReloadDate: Date.now(),
-      interval: setInterval(() => {
-        chrome.tabs.reload(tabId);
-      }, intervalCount),
-    };
-
-    reloadTabList.set(tabId, tab);
+    throw new Error(`Tad ${tab} is not exist`);
   }
 
-  return tab;
+  if (tab.interval !== null) {
+    clearInterval(tab.interval);
+  }
+
+  reloadTabList.set(
+    tabId,
+    updateTabState(tab, { interval: null, isReload: false })
+  );
+
+  return `Reload Tab ${tabId} stop`;
 };
 
 const deleteTabReload = (tabId: number): string => {
@@ -92,7 +114,9 @@ const deleteTabReload = (tabId: number): string => {
     throw new Error(`Tad ${tab} is not exist`);
   }
 
-  clearInterval(tab.interval);
+  if (tab.interval !== null) {
+    clearInterval(tab.interval);
+  }
 
   reloadTabList.delete(tabId);
 
@@ -104,15 +128,15 @@ chrome.runtime.onMessage.addListener(
     console.log('onMessage.addListener', sender);
 
     if (isReloadingMessage(request)) {
-      sendResponse(getTabReloadResponse(isReloading(request.tabId)));
+      sendResponse(getTabReloadResponse(isReloadingState(request.tabId)));
     }
 
     if (isStartReloadMessage(request)) {
-      sendResponse(getTabReloadResponse(setTabReload(request.data)));
+      sendResponse(getTabReloadResponse(startReload(request.data)));
     }
 
     if (isStopReloadMessage(request)) {
-      sendResponse(deleteTabReload(request.tabId));
+      sendResponse(stopReload(request.tabId));
     }
 
     const tabId = sender.tab?.id;
@@ -122,13 +146,25 @@ chrome.runtime.onMessage.addListener(
     }
 
     if (isTabReloadFromContentMessage(request)) {
-      sendResponse(!!isReloading(tabId));
+      sendResponse(!!isReloadingState(tabId));
     }
 
     if (isSetDocumentTextFromContentMessage(request)) {
-      sendResponse(
-        changeReloadTabDataBySearchResult(tabId, request.documentText)
-      );
+      sendResponse(changeReloadTabBySearchResult(tabId, request.documentText));
     }
   }
 );
+
+chrome.notifications.onClicked.addListener((notificationId) => {
+  reloadTabList.forEach(async (tab, tabId) => {
+    if (tab.notificationId === notificationId) {
+      await chrome.tabs.update(tabId, { active: true });
+
+      return;
+    }
+  });
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  deleteTabReload(tabId);
+});

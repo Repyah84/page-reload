@@ -1,6 +1,8 @@
-import { RuntimeStartReloadMessageData } from './runtime-start-reload-message-data.type';
+import { RuntimeMessageStartReloadData } from './runtime-message-start-reload-data.type';
 
-export interface TabReload extends RuntimeStartReloadMessageData {
+export interface TabReload extends RuntimeMessageStartReloadData {
   startReloadDate: number;
-  interval: ReturnType<typeof setInterval>;
+  interval: ReturnType<typeof setInterval> | null;
+  isReload: boolean;
+  notificationId: string | null;
 }

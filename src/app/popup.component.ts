@@ -40,18 +40,22 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   public get validator(): boolean {
-    console.log('validator');
-
     return this.intervalControl.valid && this.textControl.valid;
   }
 
   public ngOnInit(): void {
     this._subscription.add(
       this._popup.isReloading$.subscribe({
-        next: ({ tabId, intervalCount, startReloadDate, searchText }) => {
+        next: ({
+          tabId,
+          intervalCount,
+          startReloadDate,
+          searchText,
+          isReload,
+        }) => {
           console.log('IS_RELOADED', tabId, startReloadDate);
 
-          this.isReloading = true;
+          this.isReloading = isReload;
           this.intervalControl.setValue(intervalCount);
           this.textControl.setValue(searchText);
 

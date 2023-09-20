@@ -1,5 +1,5 @@
 import { RuntimeMessage } from './runtime-message.type';
 
-export interface RuntimeSetDocumentText extends RuntimeMessage {
+export interface RuntimeMessageSetDocumentText extends RuntimeMessage {
   documentText: string;
 }

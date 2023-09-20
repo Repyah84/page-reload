@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ChromeActiveTabService } from './chrome/active-tab';
 import { RuntimeMassageService } from './chrome/runtime-message';
-import { Subject, exhaustMap, filter, switchMap } from 'rxjs';
-import { RuntimeStarReloadMessage } from './types/runtime-start-reload-message.type';
-import { RuntimeStopReloadMessage } from './types/runtime-stop-reload-message.type';
+import { Subject, exhaustMap, filter, forkJoin, switchMap } from 'rxjs';
+import { RuntimeMessageStarReload } from './types/runtime-message-start-reload.type';
+import { RuntimeMessageStopReload } from './types/runtime-message-stop-reload.type';
 import { RuntimeMessageResponse } from './types/runtime-message-response';
 import { RuntimeMessageIsReloading } from './types/runtime-message-is-reloading.type';
 import { RuntimeTabDto } from './dto/runtime-tab-dto.type';
@@ -18,7 +18,7 @@ export class PopupService {
       this._activeTab.getActiveTabId().pipe(
         switchMap((tabId) =>
           this._massage.setMessage<
-            RuntimeStarReloadMessage,
+            RuntimeMessageStarReload,
             RuntimeMessageResponse
           >({
             message: 'startReload',
@@ -36,7 +36,7 @@ export class PopupService {
     exhaustMap(() =>
       this._activeTab.getActiveTabId().pipe(
         switchMap((tabId) =>
-          this._massage.setMessage<RuntimeStopReloadMessage, string>({
+          this._massage.setMessage<RuntimeMessageStopReload, string>({
             message: 'stopReload',
             tabId,
           })
