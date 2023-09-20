@@ -23,28 +23,20 @@ const windowEvent = async () => {
     message: 'isReloadingFromContent',
   });
 
-  if (!isTabReload) {
-    console.log('Tab slip');
+  if (isTabReload) {
+    const documentText = document.body.textContent;
 
-    return;
+    if (documentText !== null) {
+      const formatDocumentText = documentText.replace(/\s+/g, ' ');
+
+      const response = await messageSetDOcumentText({
+        message: 'setDocumentTexFrommContent',
+        documentText: formatDocumentText,
+      });
+
+      console.log('CONTENT_RESPONSE', response);
+    }
   }
-
-  const documentText = document.body.textContent;
-
-  if (documentText === null) {
-    console.log('document content is empty');
-
-    return;
-  }
-
-  const formatDocumentText = documentText.replace(/\s+/g, ' ');
-
-  const response = await messageSetDOcumentText({
-    message: 'setDocumentTexFrommContent',
-    documentText: formatDocumentText,
-  });
-
-  console.log('CONTENT_RESPONSE', response);
 
   window.removeEventListener('load', windowEvent);
 };

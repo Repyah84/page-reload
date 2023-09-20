@@ -1,5 +1,5 @@
 import { RuntimeMessageStopReload } from 'src/app/types/runtime-message-stop-reload.type';
-import { RuntimeMessages } from '../types/runtime-messages.type';
+import { RuntimeMessages } from '../../app/types/runtime-messages.type';
 
 export const isStopReloadMessage = (
   value: RuntimeMessages

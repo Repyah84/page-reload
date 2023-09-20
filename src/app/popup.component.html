@@ -1,15 +1,19 @@
 <div class="popup">
   <div class="popup__action">
     <button
+      class="popup__btn"
       [disabled]="!validator"
       [class.popup--is-reloading]="isReloading"
       (click)="onStartReload()"
-      class="popup__btn"
     >
       <span>Start reload</span>
     </button>
 
-    <button class="popup__btn" (click)="onStopReload()">
+    <button
+      class="popup__btn"
+      [disabled]="!isReloading"
+      (click)="onStopReload()"
+    >
       <span>Stop reload</span>
     </button>
   </div>
@@ -20,6 +24,30 @@
 
   <div>
     <input [formControl]="textControl" type="text" placeholder="enter text" />
+  </div>
+
+  <div>
+    <label>
+      <input
+        type="checkbox"
+        name="show-notification"
+        [(ngModel)]="hasNotification"
+      />
+      <span>Show notification when this text is</span>
+    </label>
+
+    <select [(ngModel)]="notificationAction">
+      <option *ngFor="let option of selectOptions" [value]="option.value">
+        {{ option.name }}
+      </option>
+    </select>
+  </div>
+
+  <div>
+    <label>
+      <input type="checkbox" [(ngModel)]="isRefresh" />
+      <span>Stop the refresher when search is triggered</span>
+    </label>
   </div>
 
   <div>

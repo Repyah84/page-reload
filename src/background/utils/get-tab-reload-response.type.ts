@@ -8,13 +8,7 @@ export const getTabReloadResponse = (
     return null;
   }
 
-  const { tabId, intervalCount, startReloadDate, searchText, isReload } = value;
+  const { interval, notificationId, ...data } = value;
 
-  return {
-    tabId,
-    intervalCount,
-    startReloadDate,
-    searchText,
-    isReload,
-  };
+  return data;
 };

@@ -3,4 +3,5 @@ export type Message =
   | 'stopReload'
   | 'isReloading'
   | 'isReloadingFromContent'
-  | 'setDocumentTexFrommContent';
+  | 'setDocumentTexFrommContent'
+  | 'stopReloadFromHost';

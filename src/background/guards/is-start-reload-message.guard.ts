@@ -1,5 +1,5 @@
 import { RuntimeMessageStarReload } from 'src/app/types/runtime-message-start-reload.type';
-import { RuntimeMessages } from '../types/runtime-messages.type';
+import { RuntimeMessages } from '../../app/types/runtime-messages.type';
 
 export const isStartReloadMessage = (
   value: RuntimeMessages
