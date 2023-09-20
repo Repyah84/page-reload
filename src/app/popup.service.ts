@@ -63,35 +63,12 @@ export class PopupService {
     )
   );
 
-  public readonly isReloading$ = this._activeTab.getActiveTabId().pipe(
-    switchMap((tabId) =>
-      this._massage.setMessage<
-        RuntimeMessageIsReloading,
-        RuntimeMessageResponse | null
-      >({
-        message: 'isReloading',
-        tabId,
-      })
-    ),
+  public readonly storeData$ = this._activeTab.getActiveTabId().pipe(
+    switchMap((tabId) => this._store.storeGet(tabId.toString())),
     filter(
-      (tab): tab is RuntimeMessageResponse => tab !== undefined && tab !== null
+      (tab): tab is RuntimeMessageStartReloadData =>
+        tab !== undefined && tab !== null
     )
-  );
-
-  public readonly storeData$ = this._activeTab
-    .getActiveTabId()
-    .pipe(switchMap((tabId) => this._store.storeGet(tabId.toString())));
-
-  public readonly defaultState$: Observable<
-    RuntimeMessageStartReloadData | RuntimeMessageResponse
-  > = this.storeData$.pipe(
-    switchMap((store) => {
-      if (store === null) {
-        return this.isReloading$;
-      }
-
-      return of(store);
-    })
   );
 
   public readonly storeChange$ = this._activeTab

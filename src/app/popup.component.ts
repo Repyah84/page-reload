@@ -105,8 +105,9 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       })
     );
+
     this._subscription.add(
-      this._popup.defaultState$.subscribe({
+      this._popup.storeData$.subscribe({
         next: (response) => {
           this._updateState(response);
         },

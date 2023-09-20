@@ -1,6 +1,5 @@
 import { TabReload } from '../app/types/tab-reload.type';
 import { RuntimeMessages } from '../app/types/runtime-messages.type';
-import { isReloadingMessage } from './guards/is-reloading-message.guard';
 import { getTabReloadResponse } from './utils/get-tab-reload-response.type';
 import { isStartReloadMessage } from './guards/is-start-reload-message.guard';
 import { isStopReloadMessage } from './guards/is-stop-reload-message.guard';
@@ -8,7 +7,7 @@ import { isTabReloadFromContentMessage } from './guards/is-tab-reload-from-conte
 import { isSetDocumentTextFromContentMessage } from './guards/is-set-document-text-from-content-message';
 import { RuntimeMessageStartReloadData } from '../app/types/runtime-message-start-reload-data.type';
 import { searchTextInDocument } from './utils/search-text-in-document';
-import { updateTabState as updateState } from './utils/update-tab-state';
+import { updateTabState } from './utils/update-tab-state';
 
 const reloadTabList = new Map<number, TabReload>();
 
@@ -129,7 +128,7 @@ const changeStore = (tabId: number) => {
       return;
     }
 
-    const storeNewData = updateState(storeDAta, { isReload: false });
+    const storeNewData = updateTabState(storeDAta, { isReload: false });
 
     void chrome.storage.session.set({ [tabId]: storeNewData });
   });
@@ -137,10 +136,6 @@ const changeStore = (tabId: number) => {
 
 chrome.runtime.onMessage.addListener(
   (request: RuntimeMessages, sender, sendResponse) => {
-    if (isReloadingMessage(request)) {
-      sendResponse(getTabReloadResponse(isReloadingState(request.tabId)));
-    }
-
     if (isStartReloadMessage(request)) {
       sendResponse(getTabReloadResponse(startReload(request.data)));
     }
@@ -171,6 +166,8 @@ chrome.notifications.onClicked.addListener((notificationId) => {
   notification.forEach((not, tabId) => {
     if (not === notificationId) {
       void chrome.tabs.update(tabId, { active: true });
+
+      notification.delete(tabId);
     }
   });
 });
