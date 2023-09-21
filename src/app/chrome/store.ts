@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Observable, Subject, defer, from, map } from 'rxjs';
+import { Observable, Subject, defer, map } from 'rxjs';
 import { RuntimeMessageStartReloadData } from '../types/runtime-message-start-reload-data.type';
 
 @Injectable({ providedIn: 'root' })

@@ -1,19 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ChromeActiveTabService } from './chrome/active-tab';
 import { RuntimeMassageService } from './chrome/runtime-message';
-import {
-  Observable,
-  Subject,
-  exhaustMap,
-  filter,
-  map,
-  of,
-  switchMap,
-} from 'rxjs';
+import { Subject, exhaustMap, filter, map, switchMap } from 'rxjs';
 import { RuntimeMessageStarReload } from './types/runtime-message-start-reload.type';
 import { RuntimeMessageStopReload } from './types/runtime-message-stop-reload.type';
 import { RuntimeMessageResponse } from './types/runtime-message-response';
-import { RuntimeMessageIsReloading } from './types/runtime-message-is-reloading.type';
 import { RuntimeTabDto } from './dto/runtime-tab-dto.type';
 import { StoreService } from './chrome/store';
 import { RuntimeMessageStartReloadData } from './types/runtime-message-start-reload-data.type';

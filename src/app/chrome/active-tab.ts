@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, defer, map, shareReplay, tap } from 'rxjs';
+import { Observable, defer, map, shareReplay } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ChromeActiveTabService {
