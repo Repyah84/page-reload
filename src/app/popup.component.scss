@@ -13,7 +13,7 @@
 
   background-color: white;
 
-  color: #212121;
+  color: var(--popup-text-color-mode);
 
   box-shadow: 0 0 0 1px inset #7d7d7d;
 
@@ -38,8 +38,6 @@
   margin: 0;
 
   margin-bottom: 5px;
-
-  font-weight: 700;
 }
 
 .popup .popup__action {
@@ -62,24 +60,25 @@
   border-radius: 14px;
 
   font-size: 16px;
-  font-weight: 700;
   text-transform: uppercase;
   text-align: center;
 
-  color: #000000;
+  color: var(--popup-text-color-mode);
 
   cursor: pointer;
 }
 
 .popup .popup__btn--is-disabled {
   opacity: 0.5;
+
+  cursor: auto;
 }
 
 .popup .popup__btn--is-reloading {
   background-color: var(--popup-color-warn);
 }
 
-.popup .popup--bald {
+.popup .popup--bold {
   font-weight: 700;
 }
 

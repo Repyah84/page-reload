@@ -7,7 +7,6 @@ import {
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
 
 import { PopupService } from './popup.service';
 import { Subscription } from 'rxjs';
@@ -46,7 +45,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
-  public intervalControl = MIN_INTERVAL_COUNT_VALUE;
+  public intervalCount = MIN_INTERVAL_COUNT_VALUE;
   public searchText = '';
   public hasNotification = true;
   public isTextFoundStopRefresh = true;
@@ -69,7 +68,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isReloading = isReload;
 
     this.searchText = searchText;
-    this.intervalControl = intervalCount;
+    this.intervalCount = intervalCount;
     this.hasNotification = hasNotification;
     this.isTextFoundStopRefresh = isTextFoundStopRefresh;
     this.notificationAction = showNotificationThen;
@@ -78,12 +77,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public get validator(): boolean {
-    return (
-      this.intervalControl >= MIN_INTERVAL_COUNT_VALUE &&
-      this.searchText !== '' &&
-      this.searchText !== null &&
-      this.searchText !== undefined
-    );
+    return this.intervalCount >= MIN_INTERVAL_COUNT_VALUE && !!this.searchText;
   }
 
   public ngOnInit(): void {
@@ -124,7 +118,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const dto: RuntimeTabDto = {
         isReload: this.isReloading,
-        intervalCount: this.intervalControl,
+        intervalCount: this.intervalCount,
         searchText: this.searchText,
         showNotificationThen: this.notificationAction,
         hasNotification: this.hasNotification,
@@ -142,7 +136,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public selectPreset(value: number): void {
-    this.intervalControl = value;
+    this.intervalCount = value;
   }
 
   public ngOnDestroy(): void {
