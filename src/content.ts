@@ -23,8 +23,13 @@ const windowEvent = async () => {
     message: 'isReloadingFromContent',
   });
 
+  if (!isTabReload) {
+    console.log('Tab is slip');
+  }
+
   if (isTabReload) {
     const documentText = document.body.textContent;
+    console.log('CONTENT', documentText);
 
     if (documentText !== null) {
       const formatDocumentText = documentText.replace(/\s+/g, ' ');

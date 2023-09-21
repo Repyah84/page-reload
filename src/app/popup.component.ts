@@ -12,7 +12,6 @@ import { PopupService } from './popup.service';
 import { Subscription } from 'rxjs';
 import { RuntimeTabDto } from './dto/runtime-tab-dto.type';
 import { RuntimeNotificationAction } from './types/runtime-notification-action.type';
-import { RuntimeMessageResponse } from './types/runtime-message-response';
 import { RuntimeMessageStartReloadData } from './types/runtime-message-start-reload-data.type';
 import { MIN_INTERVAL_COUNT_VALUE } from './const/min-interval-count-value';
 import { IntervalCount } from './types/interval-count.type';
@@ -68,7 +67,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     hasNotification,
     showNotificationThen,
     isTextFoundStopRefresh,
-  }: RuntimeMessageResponse | RuntimeMessageStartReloadData): void {
+  }: RuntimeMessageStartReloadData): void {
     this.isReloading = isReload;
 
     this.searchText = searchText;

@@ -8,6 +8,7 @@ import { isSetDocumentTextFromContentMessage } from './guards/is-set-document-te
 import { RuntimeMessageStartReloadData } from '../app/types/runtime-message-start-reload-data.type';
 import { searchTextInDocument } from './utils/search-text-in-document';
 import { updateTabState } from './utils/update-tab-state';
+import { HostInterval } from './models/host-interval';
 
 const reloadTabList = new Map<number, TabReload>();
 
@@ -35,7 +36,11 @@ const changeReloadingStateBySearchResult = (
   tabId: number,
   documentText: string
 ) => {
+  console.log('changeReloadingStateBySearchResult', documentText);
+
   const tabReload = reloadTabList.get(tabId);
+
+  console.log('tabReload', tabReload);
 
   if (tabReload === undefined) {
     throw new Error(`Tad ${tabId} is not exist`);
@@ -44,6 +49,8 @@ const changeReloadingStateBySearchResult = (
   const { searchText } = tabReload;
 
   const resultSearch = searchTextInDocument(searchText, documentText);
+
+  console.log('resultSearch', resultSearch);
 
   if (resultSearch === null) {
     if (
@@ -82,6 +89,8 @@ const startReload = ({
   intervalCount,
   ...data
 }: RuntimeMessageStartReloadData): TabReload => {
+  console.log('startReload', data);
+
   let tab = reloadTabList.get(tabId);
 
   if (tab === undefined) {
@@ -91,7 +100,7 @@ const startReload = ({
       intervalCount,
       isReload: true,
       startReloadDate: Date.now(),
-      interval: null,
+      interval: new HostInterval(intervalCount),
     };
 
     reloadTabList.set(tabId, tab);
@@ -107,9 +116,7 @@ const stopReload = (tabId: number): string => {
     return `Tad ${tab} is not exist`;
   }
 
-  if (tab.interval !== null) {
-    clearInterval(tab.interval);
-  }
+  tab.interval.stop();
 
   reloadTabList.delete(tabId);
 
