@@ -1,0 +1,10 @@
+<button
+  *ngFor="let preset of intervalPresets"
+  [disabled]="disabled"
+  [class.disabled]="disabled"
+  (click)="onPresetClick(preset.value)"
+  [class.select]="intervalCount === preset.value"
+  class="btn-preset"
+>
+  {{ preset.title }}
+</button>

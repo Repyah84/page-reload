@@ -46,25 +46,11 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
+  public intervalControl = MIN_INTERVAL_COUNT_VALUE;
+  public searchText = '';
   public hasNotification = true;
-  public isRefresh = true;
+  public isTextFoundStopRefresh = true;
   public notificationAction: RuntimeNotificationAction = 'found';
-
-  public readonly intervalControl = new FormControl<number>(
-    MIN_INTERVAL_COUNT_VALUE,
-    {
-      nonNullable: true,
-      validators: [
-        Validators.min(MIN_INTERVAL_COUNT_VALUE),
-        Validators.required,
-      ],
-    }
-  );
-
-  public readonly textControl = new FormControl<string>('', {
-    nonNullable: true,
-    validators: [Validators.required],
-  });
 
   public constructor(
     private readonly _popup: PopupService,
@@ -82,17 +68,22 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   }: RuntimeMessageResponse | RuntimeMessageStartReloadData): void {
     this.isReloading = isReload;
 
-    this.intervalControl.setValue(intervalCount);
-    this.textControl.setValue(searchText);
+    this.searchText = searchText;
+    this.intervalControl = intervalCount;
     this.hasNotification = hasNotification;
-    this.isRefresh = isTextFoundStopRefresh;
+    this.isTextFoundStopRefresh = isTextFoundStopRefresh;
     this.notificationAction = showNotificationThen;
 
     this._cdr.markForCheck();
   }
 
   public get validator(): boolean {
-    return this.intervalControl.valid && this.textControl.valid;
+    return (
+      this.intervalControl >= MIN_INTERVAL_COUNT_VALUE &&
+      this.searchText !== '' &&
+      this.searchText !== null &&
+      this.searchText !== undefined
+    );
   }
 
   public ngOnInit(): void {
@@ -127,31 +118,31 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public onStartReload(): void {
-    if (!this.validator) {
+  public onInitEvent(): void {
+    if (!this.isReloading && this.validator) {
+      this.isReloading = true;
+
+      const dto: RuntimeTabDto = {
+        isReload: this.isReloading,
+        intervalCount: this.intervalControl,
+        searchText: this.searchText,
+        showNotificationThen: this.notificationAction,
+        hasNotification: this.hasNotification,
+        isTextFoundStopRefresh: this.isTextFoundStopRefresh,
+      };
+
+      this._popup.startReload(dto);
+
       return;
     }
 
-    this.isReloading = true;
-
-    const dto: RuntimeTabDto = {
-      isReload: this.isReloading,
-      intervalCount: this.intervalControl.value,
-      searchText: this.textControl.value,
-      showNotificationThen: this.notificationAction,
-      hasNotification: this.hasNotification,
-      isTextFoundStopRefresh: this.isRefresh,
-    };
-
-    this._popup.startReload(dto);
-  }
-
-  public onStopReload(): void {
-    if (!this.isReloading) {
-      return;
-    }
+    this.isReloading = false;
 
     this._popup.stopReload();
+  }
+
+  public selectPreset(value: number): void {
+    this.intervalControl = value;
   }
 
   public ngOnDestroy(): void {

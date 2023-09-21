@@ -1,0 +1,37 @@
+:host {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.btn-preset {
+  $color: var(--popup-bac-color-mode);
+
+  background-color: $color;
+
+  padding: 10px;
+
+  border-radius: 20px;
+
+  text-transform: uppercase;
+
+  font-size: 12px;
+
+  color: white;
+
+  box-shadow: 0 0 1px 0px $color;
+
+  cursor: pointer;
+}
+
+.select {
+  color: var(--popup-color-primary);
+
+  font-weight: 700;
+}

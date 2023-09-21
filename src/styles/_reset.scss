@@ -1,3 +1,11 @@
+:root {
+  --popup-color-primary: #01eb59;
+
+  --popup-color-warn: #f3390a;
+
+  --popup-bac-color-mode: #55504f;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -6,4 +14,10 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+
+button {
+  border: none;
+
+  background: none;
 }

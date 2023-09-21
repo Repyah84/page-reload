@@ -8,12 +8,13 @@
       "schematics": {
         "@schematics/angular:component": {
           "changeDetection": "OnPush",
-          "style": "scss"
+          "style": "scss",
+          "skipTests": true
         }
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "popup",
       "architect": {
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
