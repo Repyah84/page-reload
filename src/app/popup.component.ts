@@ -14,8 +14,9 @@ import { RuntimeTabDto } from './dto/runtime-tab-dto.type';
 import { RuntimeNotificationAction } from './types/runtime-notification-action.type';
 import { RuntimeMessageResponse } from './types/runtime-message-response';
 import { RuntimeMessageStartReloadData } from './types/runtime-message-start-reload-data.type';
-
-const MIN_INTERVAL_COUNT_VALUE = 3000;
+import { MIN_INTERVAL_COUNT_VALUE } from './const/min-interval-count-value';
+import { IntervalCount } from './types/interval-count.type';
+import { MAX_INTERVAL_DEFAULT_COUNT_VALUE } from './const/max-interval-default-count-value';
 
 interface Option {
   name: string;
@@ -45,7 +46,10 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
-  public intervalCount = MIN_INTERVAL_COUNT_VALUE;
+  public intervalCount: IntervalCount = [
+    MIN_INTERVAL_COUNT_VALUE,
+    MAX_INTERVAL_DEFAULT_COUNT_VALUE,
+  ];
   public searchText = '';
   public hasNotification = true;
   public isTextFoundStopRefresh = true;
@@ -77,7 +81,10 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public get validator(): boolean {
-    return this.intervalCount >= MIN_INTERVAL_COUNT_VALUE && !!this.searchText;
+    return (
+      Math.min(...this.intervalCount) >= MIN_INTERVAL_COUNT_VALUE &&
+      !!this.searchText
+    );
   }
 
   public ngOnInit(): void {
@@ -135,11 +142,17 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     this._popup.stopReload();
   }
 
-  public selectPreset(value: number): void {
-    this.intervalCount = value;
-  }
+  // public setIntervalCount(value: IntervalCount): void {
+  //   console.log('setIntervalCount', value);
+
+  //   this.intervalCount = value;
+  // }
 
   public ngOnDestroy(): void {
     this._subscription.unsubscribe();
+  }
+
+  public onShowValue(): void {
+    console.log('onShowValue', this.intervalCount);
   }
 }

@@ -3,26 +3,35 @@
     Auto refresh is {{ isReloading ? "ON" : "OFF" }}
   </h3>
 
-  <div class="popup__action">
-    <button
-      (click)="onInitEvent()"
-      [disabled]="!validator"
-      [class.popup__btn--is-reloading]="isReloading"
-      [class.popup__btn--is-disabled]="!validator"
-      class="popup__btn popup--bold"
-    >
-      <span>{{ isReloading ? "Stop" : "Start" }} </span>
-    </button>
+  <h3 class="popup__sub-title popup--bold">
+    Select random interval in seconds
+  </h3>
+
+  <div>
+    <button (click)="onShowValue()">Show</button>
   </div>
 
-  <h4 class="popup__sub-title popup--bold">
+  <div class="popup__action">
+    <popup-select-random-interval [(intervalCount)]="intervalCount">
+      <button
+        (click)="onInitEvent()"
+        [disabled]="!validator"
+        [class.popup__btn--is-reloading]="isReloading"
+        [class.popup__btn--is-disabled]="!validator"
+        class="popup__btn popup--bold"
+      >
+        <span>{{ isReloading ? "Stop" : "Start" }} </span>
+      </button>
+    </popup-select-random-interval>
+  </div>
+
+  <h3 class="popup__sub-title popup--bold">
     Or just choose the fixed interval
-  </h4>
+  </h3>
 
   <popup-interval-preset
     [disabled]="isReloading"
-    [intervalCount]="intervalCount"
-    (presetSelect)="selectPreset($event)"
+    [(intervalCount)]="intervalCount"
   ></popup-interval-preset>
 
   <div class="popup__params">

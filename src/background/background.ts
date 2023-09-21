@@ -91,9 +91,7 @@ const startReload = ({
       intervalCount,
       isReload: true,
       startReloadDate: Date.now(),
-      interval: setInterval(() => {
-        chrome.tabs.reload(tabId);
-      }, intervalCount),
+      interval: null,
     };
 
     reloadTabList.set(tabId, tab);

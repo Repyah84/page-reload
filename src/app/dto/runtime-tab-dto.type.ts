@@ -1,7 +1,7 @@
 import { RuntimeNotificationAction } from '../types/runtime-notification-action.type';
 
 export interface RuntimeTabDto {
-  intervalCount: number;
+  intervalCount: [number, number];
   searchText: string;
   isReload: boolean;
   hasNotification: boolean;

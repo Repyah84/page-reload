@@ -1,0 +1,23 @@
+<ng-container [formGroup]="intervalCountGroup">
+  <div class="input-wrapper">
+    <input
+      [formControl]="intervalCountGroup.controls.min"
+      class="input"
+      name="minValue[0]"
+      type="number"
+    />
+  </div>
+
+  <div>
+    <ng-content></ng-content>
+  </div>
+
+  <div class="input-wrapper">
+    <input
+      [formControl]="intervalCountGroup.controls.max"
+      class="input"
+      name="maxValue[1]"
+      type="number"
+    />
+  </div>
+</ng-container>

@@ -5,10 +5,15 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { IntervalCount } from 'src/app/types/interval-count.type';
 
 interface IntervalPreset {
   title: string;
   value: number;
+}
+
+function transformIntervalCount(value: IntervalCount): number {
+  return value[0] === value[1] ? value[0] : 0;
 }
 
 @Component({
@@ -88,13 +93,13 @@ export class IntervalPresetComponent {
   @Input()
   public disabled = false;
 
-  @Input({ required: true })
+  @Input({ transform: transformIntervalCount, required: true })
   public intervalCount!: number;
 
   @Output()
-  public readonly presetSelect = new EventEmitter<number>();
+  public readonly intervalCountChange = new EventEmitter<IntervalCount>();
 
   public onPresetClick(value: number): void {
-    this.presetSelect.emit(value);
+    this.intervalCountChange.emit([value, value]);
   }
 }
