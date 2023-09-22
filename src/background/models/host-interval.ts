@@ -10,11 +10,10 @@ export class HostInterval {
   public constructor(
     public readonly tabId: number,
     public readonly intervalValue: IntervalCount
-  ) {
-    this.run();
-  }
+  ) {}
 
   public run(): void {
+    console.log('run HostInterval');
     chrome.action.setIcon(
       { tabId: this.tabId, path: 'icons/reload-active.32.png' },
       () => {
@@ -36,7 +35,6 @@ export class HostInterval {
       { tabId: this.tabId, path: 'icons/reload16.png' },
       () => {
         chrome.action.setBadgeText({ tabId: this.tabId, text: '' }, () => {
-          console.log('stop_SET');
           this._clearTimer();
         });
       }
@@ -50,7 +48,6 @@ export class HostInterval {
       { tabId: this.tabId, text: getCountdownValue(this._countdown) },
       () => {
         this._countdown -= 1000;
-        console.log('INTERVAL', this._timer, this._countdown);
 
         this._timer = setTimeout(() => {
           if (this._countdown === 0) {

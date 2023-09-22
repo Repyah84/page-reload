@@ -13,7 +13,7 @@ import { isPinFromContent } from './guards/is-pin-from-content';
 
 const reloadTabList = new Map<number, TabReload>();
 
-const notification = new Map<number, string>();
+const notification = new Map<string, string>();
 
 const sendNotification = (tabId: number, message: string): void => {
   chrome.notifications.getPermissionLevel((permission) => {
@@ -26,7 +26,9 @@ const sendNotification = (tabId: number, message: string): void => {
           message,
         },
         (notificationId) => {
-          notification.set(tabId, notificationId);
+          const notificationKey = `${tabId}-${Date.now()}`;
+
+          notification.set(notificationKey, notificationId);
         }
       );
     }
@@ -77,6 +79,8 @@ const changeReloadingStateBySearchResult = (
       );
     }
 
+    tabReload.interval.run();
+
     return `There aren't coincidences in Tab: ${tabId}`;
   }
 
@@ -120,6 +124,8 @@ const startReload = ({
     reloadTabList.set(tabId, tab);
   }
 
+  tab.interval.run();
+
   return tab;
 };
 
@@ -131,8 +137,6 @@ const stopReload = (tabId: number): string => {
   reloadTabList.delete(tabId);
 
   changeStore(tabId);
-
-  console.log('@@@@@@@@@@@@@@@@@@@@@', notification);
 
   return `Reload Tab ${tabId} stop`;
 };
@@ -184,11 +188,13 @@ chrome.runtime.onMessage.addListener(
 );
 
 chrome.notifications.onClicked.addListener((notificationId) => {
-  notification.forEach((not, tabId) => {
+  notification.forEach((not, notKey) => {
     if (not === notificationId) {
-      void chrome.tabs.update(tabId, { active: true });
+      const tabId = Number(notKey.split('-')[0]);
 
-      notification.delete(tabId);
+      chrome.tabs.update(tabId, { active: true }, () => {
+        notification.delete(notKey);
+      });
     }
   });
 });

@@ -60,7 +60,6 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   private _updateState({
-    tabId,
     intervalCount,
     searchText,
     isReload,
