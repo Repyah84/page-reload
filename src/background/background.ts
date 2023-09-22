@@ -49,8 +49,6 @@ const getTabReloadForResponse = (tabId: number): TabReload | null =>
   reloadTabList.get(tabId) || null;
 
 const pin = (tabId: number): string => {
-  console.log('pin');
-
   const tabReload = getTabReload(tabId);
 
   tabReload.interval.run();
@@ -107,8 +105,6 @@ const startReload = ({
   intervalCount,
   ...data
 }: RuntimeMessageStartReloadData): TabReload => {
-  console.log('startReload', data);
-
   let tab = reloadTabList.get(tabId);
 
   if (tab === undefined) {

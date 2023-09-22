@@ -40,8 +40,6 @@ const windowEvent = () => {
     if (isTabReload !== null) {
       let response = '';
 
-      console.log('CONTENT', isTabReload);
-
       if (!!isTabReload.searchText) {
         const documentText = document.body.textContent;
 

@@ -13,7 +13,6 @@ export class HostInterval {
   ) {}
 
   public run(): void {
-    console.log('run HostInterval');
     chrome.action.setIcon(
       { tabId: this.tabId, path: 'icons/reload-active.32.png' },
       () => {
