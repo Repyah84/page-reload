@@ -4,4 +4,5 @@ export type Message =
   | 'isReloading'
   | 'isReloadingFromContent'
   | 'setDocumentTexFrommContent'
-  | 'stopReloadFromHost';
+  | 'stopReloadFromHost'
+  | 'pinFromContent';

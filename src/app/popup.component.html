@@ -7,18 +7,14 @@
     Select random interval in seconds
   </h3>
 
-  <div>
-    <button (click)="onShowValue()">Show</button>
-  </div>
-
   <div class="popup__action">
     <popup-select-random-interval [(intervalCount)]="intervalCount">
       <button
         (click)="onInitEvent()"
         [disabled]="!validator"
         [class.popup__btn--is-reloading]="isReloading"
-        [class.popup__btn--is-disabled]="!validator"
-        class="popup__btn popup--bold"
+        [class.popup--disabled]="!validator"
+        class="popup__btn popup--bold popup--action"
       >
         <span>{{ isReloading ? "Stop" : "Start" }} </span>
       </button>
@@ -36,27 +32,10 @@
 
   <div class="popup__params">
     <div>
-      <label>
-        <input
-          [(ngModel)]="hasNotification"
-          [disabled]="isReloading"
-          type="checkbox"
-          name="show-notification"
-        />
-        <span class="popup--bold">Show notification</span> when this text is
-      </label>
-
-      <select [(ngModel)]="notificationAction" [disabled]="isReloading">
-        <option *ngFor="let option of selectOptions" [value]="option.value">
-          {{ option.name }}
-        </option>
-      </select>
-    </div>
-
-    <div>
       <input
         [(ngModel)]="searchText"
         [disabled]="isReloading"
+        [class.popup--disabled]="isReloading"
         type="text"
         placeholder="enter text"
         class="popup__search-text"
@@ -66,13 +45,40 @@
     <div>
       <label>
         <input
+          [(ngModel)]="hasNotification"
+          [disabled]="searchValidator"
+          type="checkbox"
+          name="show-notification"
+        />
+        <span
+          [class.popup--disabled]="searchValidator"
+          class="popup--bold popup--action"
+          >Show notification</span
+        >
+      </label>
+      when this text is
+
+      <select [(ngModel)]="notificationAction" [disabled]="searchValidator">
+        <option *ngFor="let option of selectOptions" [value]="option.value">
+          {{ option.name }}
+        </option>
+      </select>
+    </div>
+
+    <div>
+      <label>
+        <input
           [(ngModel)]="isTextFoundStopRefresh"
-          [disabled]="isReloading"
+          [disabled]="searchValidator"
           type="checkbox"
         />
-        <span class="popup--bold">Stop the refresher</span> when search is
-        triggered
+        <span
+          [class.popup--disabled]="searchValidator"
+          class="popup--bold popup--action"
+          >Stop the refresher</span
+        >
       </label>
+      when search is triggered
     </div>
   </div>
 </div>

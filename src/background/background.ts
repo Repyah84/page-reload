@@ -9,6 +9,7 @@ import { RuntimeMessageStartReloadData } from '../app/types/runtime-message-star
 import { searchTextInDocument } from './utils/search-text-in-document';
 import { updateTabState } from './utils/update-tab-state';
 import { HostInterval } from './models/host-interval';
+import { isPinFromContent } from './guards/is-pin-from-content';
 
 const reloadTabList = new Map<number, TabReload>();
 
@@ -32,25 +33,40 @@ const sendNotification = (tabId: number, message: string): void => {
   });
 };
 
-const changeReloadingStateBySearchResult = (
-  tabId: number,
-  documentText: string
-) => {
-  console.log('changeReloadingStateBySearchResult', documentText);
-
+const getTabReload = (tabId: number): TabReload => {
   const tabReload = reloadTabList.get(tabId);
-
-  console.log('tabReload', tabReload);
 
   if (tabReload === undefined) {
     throw new Error(`Tad ${tabId} is not exist`);
   }
 
+  return tabReload;
+};
+
+const getTabReloadForResponse = (tabId: number): TabReload | null =>
+  reloadTabList.get(tabId) || null;
+
+const pin = (tabId: number): string => {
+  console.log('pin');
+
+  const tabReload = getTabReload(tabId);
+
+  tabReload.interval.run();
+
+  return `Tab is going reload`;
+};
+
+const changeReloadingStateBySearchResult = (
+  tabId: number,
+  documentText: string
+): string => {
+  console.log('changeReloadingStateBySearchResult');
+
+  const tabReload = getTabReload(tabId);
+
   const { searchText } = tabReload;
 
   const resultSearch = searchTextInDocument(searchText, documentText);
-
-  console.log('resultSearch', resultSearch);
 
   if (resultSearch === null) {
     if (
@@ -75,13 +91,13 @@ const changeReloadingStateBySearchResult = (
 
   if (tabReload.isTextFoundStopRefresh) {
     stopReload(tabId);
+
+    return `There are ${resultSearch.length} coincidences in Tab: ${tabId} stop refresh`;
   }
 
-  return `There are ${resultSearch.length} coincidences in Tab: ${tabId}`;
-};
+  tabReload.interval.run();
 
-const isReloadingState = (tabId: number): TabReload | undefined => {
-  return reloadTabList.get(tabId);
+  return `There are ${resultSearch.length} coincidences in Tab: ${tabId}`;
 };
 
 const startReload = ({
@@ -100,7 +116,7 @@ const startReload = ({
       intervalCount,
       isReload: true,
       startReloadDate: Date.now(),
-      interval: new HostInterval(intervalCount),
+      interval: new HostInterval(tabId, intervalCount),
     };
 
     reloadTabList.set(tabId, tab);
@@ -110,17 +126,15 @@ const startReload = ({
 };
 
 const stopReload = (tabId: number): string => {
-  const tab = reloadTabList.get(tabId);
+  const tabReload = getTabReload(tabId);
 
-  if (tab === undefined) {
-    return `Tad ${tab} is not exist`;
-  }
-
-  tab.interval.stop();
+  tabReload.interval.stop();
 
   reloadTabList.delete(tabId);
 
   changeStore(tabId);
+
+  console.log('@@@@@@@@@@@@@@@@@@@@@', notification);
 
   return `Reload Tab ${tabId} stop`;
 };
@@ -155,8 +169,12 @@ chrome.runtime.onMessage.addListener(
       return;
     }
 
+    if (isPinFromContent(request)) {
+      sendResponse(pin(tabId));
+    }
+
     if (isTabReloadFromContentMessage(request)) {
-      sendResponse(!!isReloadingState(tabId));
+      sendResponse(getTabReloadForResponse(tabId));
     }
 
     if (isSetDocumentTextFromContentMessage(request)) {
@@ -178,5 +196,9 @@ chrome.notifications.onClicked.addListener((notificationId) => {
 });
 
 chrome.tabs.onRemoved.addListener((tabId) => {
+  if (reloadTabList.get(tabId) === undefined) {
+    return;
+  }
+
   stopReload(tabId);
 });

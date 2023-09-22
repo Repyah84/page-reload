@@ -50,8 +50,8 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     MAX_INTERVAL_DEFAULT_COUNT_VALUE,
   ];
   public searchText = '';
-  public hasNotification = true;
-  public isTextFoundStopRefresh = true;
+  public hasNotification = false;
+  public isTextFoundStopRefresh = false;
   public notificationAction: RuntimeNotificationAction = 'found';
 
   public constructor(
@@ -80,10 +80,11 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public get validator(): boolean {
-    return (
-      Math.min(...this.intervalCount) >= MIN_INTERVAL_COUNT_VALUE &&
-      !!this.searchText
-    );
+    return Math.min(...this.intervalCount) >= MIN_INTERVAL_COUNT_VALUE;
+  }
+
+  public get searchValidator(): boolean {
+    return this.isReloading || !!!this.searchText;
   }
 
   public ngOnInit(): void {
@@ -141,17 +142,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     this._popup.stopReload();
   }
 
-  // public setIntervalCount(value: IntervalCount): void {
-  //   console.log('setIntervalCount', value);
-
-  //   this.intervalCount = value;
-  // }
-
   public ngOnDestroy(): void {
     this._subscription.unsubscribe();
-  }
-
-  public onShowValue(): void {
-    console.log('onShowValue', this.intervalCount);
   }
 }

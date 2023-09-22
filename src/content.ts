@@ -1,46 +1,52 @@
+import { RuntimeMessagePinFromContent } from './app/types/runtime-message-pin-from-content.type';
 import { RuntimeMessageIsTabReloadFromContent } from './app/types/runtime-message-is-tab-reload-from-content.type';
 import { RuntimeMessageSetDocumentText } from './app/types/runtime-message-set-document-text.type';
+import { TabReload } from './app/types/tab-reload.type';
 
-const messageIsTabReload = async (
+const messageIsTabReload = (
   data: RuntimeMessageIsTabReloadFromContent
-): Promise<boolean> => {
-  return chrome.runtime.sendMessage<
+): Promise<TabReload | null> =>
+  chrome.runtime.sendMessage<
     RuntimeMessageIsTabReloadFromContent,
-    boolean
+    TabReload | null
   >(data);
-};
 
-const messageSetDOcumentText = async (
+const messageSetDocumentText = (
   data: RuntimeMessageSetDocumentText
-): Promise<string> => {
-  return chrome.runtime.sendMessage<RuntimeMessageSetDocumentText, string>(
-    data
-  );
-};
+): Promise<string> =>
+  chrome.runtime.sendMessage<RuntimeMessageSetDocumentText, string>(data);
+
+const messagePin = (data: RuntimeMessagePinFromContent): Promise<string> =>
+  chrome.runtime.sendMessage(data);
 
 const windowEvent = async () => {
   const isTabReload = await messageIsTabReload({
     message: 'isReloadingFromContent',
   });
 
-  if (!isTabReload) {
-    console.log('Tab is slip');
-  }
+  if (isTabReload !== null) {
+    let response = '';
 
-  if (isTabReload) {
-    const documentText = document.body.textContent;
-    console.log('CONTENT', documentText);
+    console.log('CONTENT', isTabReload);
 
-    if (documentText !== null) {
-      const formatDocumentText = documentText.replace(/\s+/g, ' ');
+    if (!!isTabReload.searchText) {
+      const documentText = document.body.textContent;
 
-      const response = await messageSetDOcumentText({
-        message: 'setDocumentTexFrommContent',
-        documentText: formatDocumentText,
+      if (documentText !== null) {
+        const formatDocumentText = documentText.replace(/\s+/g, ' ');
+
+        response = await messageSetDocumentText({
+          message: 'setDocumentTexFrommContent',
+          documentText: formatDocumentText,
+        });
+      }
+    } else {
+      response = await messagePin({
+        message: 'pinFromContent',
       });
-
-      console.log('CONTENT_RESPONSE', response);
     }
+
+    console.log('CONTENT_RESPONSE', response);
   }
 
   window.removeEventListener('load', windowEvent);

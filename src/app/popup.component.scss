@@ -1,5 +1,11 @@
 @use "../styles/reset";
 
+%_title {
+  margin: 0;
+
+  text-align: center;
+}
+
 .popup {
   display: block;
 
@@ -20,24 +26,22 @@
   font-family: "Roboto", sans-serif;
 
   font-size: 12px;
-
-  text-align: center;
 }
 
 .popup .popup__title {
-  margin: 0;
+  @extend %_title;
 
   margin-bottom: 10px;
 }
 
-.popup .popup__title--state {
-  color: #c7868e;
-}
-
 .popup .popup__sub-title {
-  margin: 0;
+  @extend %_title;
 
   margin-bottom: 5px;
+}
+
+.popup .popup__title--state {
+  color: #c7868e;
 }
 
 .popup .popup__action {
@@ -64,11 +68,13 @@
   text-align: center;
 
   color: var(--popup-text-color-mode);
+}
 
+.popup .popup--action {
   cursor: pointer;
 }
 
-.popup .popup__btn--is-disabled {
+.popup .popup--disabled {
   opacity: 0.5;
 
   cursor: auto;
