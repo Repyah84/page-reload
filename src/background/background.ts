@@ -21,7 +21,7 @@ const sendNotification = (tabId: number, message: string): void => {
       chrome.notifications.create(
         {
           type: 'basic',
-          iconUrl: 'favicon.ico',
+          iconUrl: 'icons/reload256.png',
           title: 'Found coincidences',
           message,
         },
@@ -60,8 +60,6 @@ const changeReloadingStateBySearchResult = (
   tabId: number,
   documentText: string
 ): string => {
-  console.log('changeReloadingStateBySearchResult');
-
   const tabReload = getTabReload(tabId);
 
   const { searchText } = tabReload;

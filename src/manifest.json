@@ -1,12 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "Text Search",
-  "description": "Base Level Extension",
+  "name": "Auto reload",
+  "description": "Multi reload pages ad search text by random interval or by ready presets",
   "version": "1.0",
   "permissions": ["scripting", "activeTab", "tabs", "notifications", "storage"],
+  "icons": {
+    "16": "icons/reload16.png",
+    "64": "icons/reload64.png",
+    "128": "icons/reload128.png",
+    "256": "icons/reload256.png"
+  },
   "action": {
     "default_popup": "index.html",
-    "default_icon": "favicon.ico"
+    "default_icon": {
+      "16": "icons/reload16.png",
+      "24": "icons/reload24.png",
+      "32": "icons/reload32.png"
+    }
   },
   "background": {
     "service_worker": "background.js",

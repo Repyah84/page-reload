@@ -1,8 +1,11 @@
 import { IntervalCount } from 'src/app/types/interval-count.type';
 import { getRandomNumberInRange } from '../utils/get-random-number-in-range';
+import { getCountdownValue } from '../utils/get-countdown-timer-value';
 
 export class HostInterval {
   private _timer: ReturnType<typeof setTimeout> | null = null;
+
+  private _countdown = 0;
 
   public constructor(
     public readonly tabId: number,
@@ -12,53 +15,54 @@ export class HostInterval {
   }
 
   public run(): void {
-    this._runTimer(this.intervalValue);
-    // chrome.action.setIcon(
-    //   { tabId: this.tabId, path: 'icons/reload-active.32.png' },
-    //   () => {
-    //   }
-    // );
+    chrome.action.setIcon(
+      { tabId: this.tabId, path: 'icons/reload-active.32.png' },
+      () => {
+        this._countdown =
+          this.intervalValue[0] === this.intervalValue[1]
+            ? (this._countdown = this.intervalValue[0])
+            : getRandomNumberInRange(
+                this.intervalValue[0] * 0.001,
+                this.intervalValue[1] * 0.001
+              ) * 1000;
+
+        this._runTimer();
+      }
+    );
   }
 
   public stop(): void {
-    this._clearTimer();
-    // chrome.action.setIcon(
-    //   { tabId: this.tabId, path: 'icons/reload16.png' },
-    //   () => {
-    //   }
-    // );
+    chrome.action.setIcon(
+      { tabId: this.tabId, path: 'icons/reload16.png' },
+      () => {
+        chrome.action.setBadgeText({ tabId: this.tabId, text: '' }, () => {
+          console.log('stop_SET');
+          this._clearTimer();
+        });
+      }
+    );
   }
 
-  private _runTimer(value: IntervalCount): void {
-    // chrome.action.setBadgeBackgroundColor(
-    //   { tabId: this.tabId, color: '#17eb3a' },
-    //   () => {
-    //     chrome.action.setBadgeText(
-    //       { tabId: this.tabId, text: 'Is run' },
-    //       () => {
-    //         chrome.action.getBadgeText({ tabId: this.tabId }, (result) => {
-    //           console.log('BADGE_TEXS', result);
-    //         });
-    //       }
-    //     );
-    //   }
-    // );
-
+  private _runTimer(): void {
     this._clearTimer();
 
-    let time = 0;
+    chrome.action.setBadgeText(
+      { tabId: this.tabId, text: getCountdownValue(this._countdown) },
+      () => {
+        this._countdown -= 1000;
+        console.log('INTERVAL', this._timer, this._countdown);
 
-    if (value[0] === value[1]) {
-      time = value[0];
-    } else {
-      time = getRandomNumberInRange(value[0] * 0.001, value[1] * 0.001) * 1000;
-    }
+        this._timer = setTimeout(() => {
+          if (this._countdown === 0) {
+            void chrome.tabs.reload(this.tabId);
 
-    console.log('INTERVAL', this._timer, time);
+            return;
+          }
 
-    this._timer = setTimeout(() => {
-      chrome.tabs.reload(this.tabId);
-    }, time);
+          this._runTimer();
+        }, 1000);
+      }
+    );
   }
 
   private _clearTimer(): void {
