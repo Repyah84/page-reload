@@ -11,6 +11,8 @@ const clineTimer = () => {
   }
 
   clearTimeout(timer);
+
+  timer = null;
 };
 
 const messageIsTabReload = (

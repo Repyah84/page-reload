@@ -29,6 +29,10 @@ export class HostInterval {
     );
   }
 
+  public remove() {
+    this._clearTimer();
+  }
+
   public stop(): void {
     chrome.action.setIcon(
       { tabId: this.tabId, path: 'icons/reload16.png' },

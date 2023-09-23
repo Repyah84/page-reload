@@ -125,6 +125,14 @@ const startReload = ({
   return tab;
 };
 
+const removeReload = (tabId: number): void => {
+  const tabReload = getTabReload(tabId);
+
+  tabReload.interval.remove();
+
+  reloadTabList.delete(tabId);
+};
+
 const stopReload = (tabId: number): string => {
   const tabReload = getTabReload(tabId);
 
@@ -200,5 +208,5 @@ chrome.tabs.onRemoved.addListener((tabId) => {
     return;
   }
 
-  stopReload(tabId);
+  removeReload(tabId);
 });

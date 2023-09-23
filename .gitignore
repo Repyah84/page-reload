@@ -10,6 +10,8 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+text-search.crx
+text-search.pem
 
 # IDEs and editors
 .idea/
