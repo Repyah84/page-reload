@@ -10,11 +10,19 @@ import { searchTextInDocument } from './utils/search-text-in-document';
 import { updateTabState } from './utils/update-tab-state';
 import { HostInterval } from './models/host-interval';
 import { isPinFromContent } from './guards/is-pin-from-content';
-
+/**
+ * Tab data reload list
+ */
 const reloadTabList = new Map<number, TabReload>();
-
+/**
+ * Notification data list
+ */
 const notification = new Map<string, string>();
-
+/**
+ * Send notification then search text was found
+ * @param tabId
+ * @param message
+ */
 const sendNotification = (tabId: number, message: string): void => {
   chrome.notifications.getPermissionLevel((permission) => {
     if (permission === 'granted') {
@@ -34,7 +42,11 @@ const sendNotification = (tabId: number, message: string): void => {
     }
   });
 };
-
+/**
+ * Get table data of tabReloadList
+ * @param tabId
+ * @returns
+ */
 const getTabReload = (tabId: number): TabReload => {
   const tabReload = reloadTabList.get(tabId);
 
@@ -44,10 +56,18 @@ const getTabReload = (tabId: number): TabReload => {
 
   return tabReload;
 };
-
+/**
+ * Get tab reload data from response
+ * @param tabId
+ * @returns
+ */
 const getTabReloadForResponse = (tabId: number): TabReload | null =>
   reloadTabList.get(tabId) || null;
-
+/**
+ * Init reload by inside
+ * @param tabId
+ * @returns
+ */
 const pin = (tabId: number): string => {
   const tabReload = getTabReload(tabId);
 
@@ -55,7 +75,12 @@ const pin = (tabId: number): string => {
 
   return `Tab is going reload`;
 };
-
+/**
+ * Handle data search
+ * @param tabId
+ * @param documentText
+ * @returns
+ */
 const changeReloadingStateBySearchResult = (
   tabId: number,
   documentText: string
@@ -99,7 +124,11 @@ const changeReloadingStateBySearchResult = (
 
   return `There are ${resultSearch.length} coincidences in Tab: ${tabId}`;
 };
-
+/**
+ * Create new data reload tab, initial reload
+ * @param param0
+ * @returns
+ */
 const startReload = ({
   tabId,
   intervalCount,
@@ -124,7 +153,10 @@ const startReload = ({
 
   return tab;
 };
-
+/**
+ * Stop reload, delete tab reload data from tab reload list when origin tab was remove
+ * @param tabId
+ */
 const removeReload = (tabId: number): void => {
   const tabReload = getTabReload(tabId);
 
@@ -132,7 +164,11 @@ const removeReload = (tabId: number): void => {
 
   reloadTabList.delete(tabId);
 };
-
+/**
+ * Stop reload, delete tab reload data from tab reload list
+ * @param tabId
+ * @returns
+ */
 const stopReload = (tabId: number): string => {
   const tabReload = getTabReload(tabId);
 
@@ -144,7 +180,10 @@ const stopReload = (tabId: number): string => {
 
   return `Reload Tab ${tabId} stop`;
 };
-
+/**
+ * Change store by search result
+ * @param tabId
+ */
 const changeStore = (tabId: number) => {
   chrome.storage.session.get((items) => {
     const storeDAta: RuntimeMessageStartReloadData | undefined = items[tabId];
@@ -158,7 +197,9 @@ const changeStore = (tabId: number) => {
     void chrome.storage.session.set({ [tabId]: storeNewData });
   });
 };
-
+/**
+ * Get runtime messages
+ */
 chrome.runtime.onMessage.addListener(
   (request: RuntimeMessages, sender, sendResponse) => {
     if (isStartReloadMessage(request)) {
@@ -190,7 +231,9 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
-
+/**
+ * Handle notification by user action
+ */
 chrome.notifications.onClicked.addListener((notificationId) => {
   notification.forEach((not, notKey) => {
     if (not === notificationId) {
@@ -202,7 +245,9 @@ chrome.notifications.onClicked.addListener((notificationId) => {
     }
   });
 });
-
+/**
+ * Handle origin tab state
+ */
 chrome.tabs.onRemoved.addListener((tabId) => {
   if (reloadTabList.get(tabId) === undefined) {
     return;
