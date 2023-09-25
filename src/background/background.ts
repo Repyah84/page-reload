@@ -132,6 +132,7 @@ const changeReloadingStateBySearchResult = (
 const startReload = ({
   tabId,
   intervalCount,
+  isReload,
   ...data
 }: RuntimeMessageStartReloadData): TabReload => {
   let tab = reloadTabList.get(tabId);
@@ -141,7 +142,7 @@ const startReload = ({
       ...data,
       tabId,
       intervalCount,
-      isReload: true,
+      isReload,
       startReloadDate: Date.now(),
       interval: new HostInterval(tabId, intervalCount),
     };
