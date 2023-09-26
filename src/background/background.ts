@@ -102,10 +102,13 @@ const changeReloadingStateBySearchResult = (
       );
     }
 
-    if (!isSearchTriggeredStopRefresh) {
-      interval.run();
-    } else {
+    if (
+      tabReload.showNotificationThen === 'notFound' &&
+      isSearchTriggeredStopRefresh
+    ) {
       stopReload(tabId);
+    } else {
+      interval.run();
     }
 
     return `There aren't coincidences in Tab: ${tabId}`;
