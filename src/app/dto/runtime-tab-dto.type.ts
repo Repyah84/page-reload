@@ -6,5 +6,5 @@ export interface RuntimeTabDto {
   isReload: boolean;
   hasNotification: boolean;
   showNotificationThen: RuntimeNotificationAction;
-  isTextFoundStopRefresh: boolean;
+  isSearchTriggeredStopRefresh: boolean;
 }

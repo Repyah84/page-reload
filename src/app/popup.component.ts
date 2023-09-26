@@ -51,7 +51,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
   public searchText = '';
   public hasNotification = false;
-  public isTextFoundStopRefresh = false;
+  public isSearchTriggeredStopRefresh = false;
   public notificationAction: RuntimeNotificationAction = 'found';
 
   public constructor(
@@ -65,14 +65,14 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
     isReload,
     hasNotification,
     showNotificationThen,
-    isTextFoundStopRefresh,
+    isSearchTriggeredStopRefresh,
   }: RuntimeMessageStartReloadData): void {
     this.isReloading = isReload;
 
     this.searchText = searchText;
     this.intervalCount = intervalCount;
     this.hasNotification = hasNotification;
-    this.isTextFoundStopRefresh = isTextFoundStopRefresh;
+    this.isSearchTriggeredStopRefresh = isSearchTriggeredStopRefresh;
     this.notificationAction = showNotificationThen;
 
     this._cdr.markForCheck();
@@ -128,7 +128,7 @@ export class PopupComponent implements OnInit, AfterViewInit, OnDestroy {
         searchText: this.searchText,
         showNotificationThen: this.notificationAction,
         hasNotification: this.hasNotification,
-        isTextFoundStopRefresh: this.isTextFoundStopRefresh,
+        isSearchTriggeredStopRefresh: this.isSearchTriggeredStopRefresh,
       };
 
       this._popup.startReload(dto);

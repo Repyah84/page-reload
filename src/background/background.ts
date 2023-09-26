@@ -87,7 +87,7 @@ const changeReloadingStateBySearchResult = (
 ): string => {
   const tabReload = getTabReload(tabId);
 
-  const { searchText } = tabReload;
+  const { searchText, isSearchTriggeredStopRefresh, interval } = tabReload;
 
   const resultSearch = searchTextInDocument(searchText, documentText);
 
@@ -102,7 +102,11 @@ const changeReloadingStateBySearchResult = (
       );
     }
 
-    tabReload.interval.run();
+    if (!isSearchTriggeredStopRefresh) {
+      interval.run();
+    } else {
+      stopReload(tabId);
+    }
 
     return `There aren't coincidences in Tab: ${tabId}`;
   }
@@ -114,13 +118,13 @@ const changeReloadingStateBySearchResult = (
     );
   }
 
-  if (tabReload.isTextFoundStopRefresh) {
+  if (isSearchTriggeredStopRefresh) {
     stopReload(tabId);
 
     return `There are ${resultSearch.length} coincidences in Tab: ${tabId} stop refresh`;
   }
 
-  tabReload.interval.run();
+  interval.run();
 
   return `There are ${resultSearch.length} coincidences in Tab: ${tabId}`;
 };
