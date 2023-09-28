@@ -85,27 +85,25 @@ const changeReloadingStateBySearchResult = (
   tabId: number,
   documentText: string
 ): string => {
-  const tabReload = getTabReload(tabId);
-
-  const { searchText, isSearchTriggeredStopRefresh, interval } = tabReload;
+  const {
+    searchText,
+    isSearchTriggeredStopRefresh,
+    interval,
+    hasNotification,
+    showNotificationThen,
+  } = getTabReload(tabId);
 
   const resultSearch = searchTextInDocument(searchText, documentText);
 
   if (resultSearch === null) {
-    if (
-      tabReload.showNotificationThen === 'notFound' &&
-      tabReload.hasNotification
-    ) {
+    if (showNotificationThen === 'notFound' && hasNotification) {
       sendNotification(
         tabId,
-        `There aren't ${tabReload.searchText} coincidences in Tab: ${tabId}`
+        `There aren't ${searchText} coincidences in Tab: ${tabId}`
       );
     }
 
-    if (
-      tabReload.showNotificationThen === 'notFound' &&
-      isSearchTriggeredStopRefresh
-    ) {
+    if (showNotificationThen === 'notFound' && isSearchTriggeredStopRefresh) {
       stopReload(tabId);
     } else {
       interval.run();
@@ -114,10 +112,10 @@ const changeReloadingStateBySearchResult = (
     return `There aren't coincidences in Tab: ${tabId}`;
   }
 
-  if (tabReload.showNotificationThen === 'found' && tabReload.hasNotification) {
+  if (showNotificationThen === 'found' && hasNotification) {
     sendNotification(
       tabId,
-      `"${tabReload.searchText}" found :${resultSearch.length} coincidences`
+      `"${searchText}" found :${resultSearch.length} coincidences`
     );
   }
 
